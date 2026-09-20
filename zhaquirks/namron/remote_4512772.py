@@ -36,8 +36,10 @@ CHANNELS = (
     (1, BUTTON_7, BUTTON_8),
 )
 
-# Stop carries no direction, so only one release trigger per channel is
-# possible here, not one per button.
+# Stop carries no direction, so releasing either button reports the same
+# command/cluster/endpoint. Both buttons get an identical release trigger
+# dict so each is individually selectable (see paulmann/fourbtnremote.py
+# for the same pattern on this manufacturer's other remotes).
 _TRIGGERS = {
     key: value
     for endpoint_id, on_button, off_button in CHANNELS
@@ -78,6 +80,14 @@ _TRIGGERS = {
         ),
         (
             (LONG_RELEASE, on_button),
+            {
+                COMMAND: COMMAND_STOP_ON_OFF,
+                ENDPOINT_ID: endpoint_id,
+                CLUSTER_ID: LevelControl.cluster_id,
+            },
+        ),
+        (
+            (LONG_RELEASE, off_button),
             {
                 COMMAND: COMMAND_STOP_ON_OFF,
                 ENDPOINT_ID: endpoint_id,
